@@ -1,17 +1,90 @@
-# calorie_tracker
+# Calorie Tracker
 
-A new Flutter project.
+Приложение для учёта калорий с каталогом продуктов и дневником питания.
 
-## Getting Started
+# Автор
+Горишний Д.О.
+Группа ИСП-232
 
-This project is a starting point for a Flutter application.
+# Стек
+- Flutter 
+- Dart 
+- Web (Chrome)
 
-A few resources to get you started if this is your first Flutter project:
+# Скриншоты
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+![Главный экран](img/main1.png)
+![Инфо](img/final2.png)
+![Дневник](img/final1.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Запуск проекта
+
+## Клонирование репозитория
+git clone <репозиторий>
+cd calorie_tracker
+
+## Установка зависимостей
+flutter pub get
+
+## Запуск в браузере
+flutter run -d chrome
+
+## Функционал
+
+### Главный экран
+
+- Отображение списка продуктов в виде карточек
+- Фильтрация по категориям через `ChoiceChip`
+- Счётчик отфильтрованных продуктов
+- Кнопка перехода в дневник
+- Долгое нажатие для добавления в дневник
+- `FloatingActionButton` при наличии записей в дневнике
+
+### Детальный экран продукта
+
+- Иконка и категория продукта
+- Калорийность на 100г
+- Белки, жиры, углеводы (КБЖУ)
+- Визуализация соотношения КБЖУ через цветную полосу
+- Кнопка добавления в дневник
+
+### Дневник питания
+
+- Список добавленных продуктов с весом и временем
+- Итоговая статистика за день:
+  - Суммарные калории
+  - Белки, жиры, углеводы
+- Цветовая индикация суточной нормы калорий
+
+## Особенности реализации
+
+### Визуализация
+
+- Цветовое кодирование: зелёный (меньше 100 ккал), оранжевый (меньше 200 ккал), красный (больше или равно 200 ккал)
+- Пропорциональная полоса КБЖУ на основе энергетической ценности:
+  - Белки: умножить на 4
+  - Жиры: умножить на 9
+  - Углеводы: умножить на 4
+
+### Взаимодействие
+
+- Навигация между экранами через `Navigator.push()`
+- Передача данных через параметры виджетов
+- Диалоговое окно для ввода веса порции
+- `SnackBar` для уведомлений о добавлении
+- Обновление UI через `setState()`
+
+## Изученные концепции
+
+| Концепция | Применение |
+|-----------|------------|
+| `final` и `const` | Поля моделей и списки данных |
+| Геттеры (computed properties) | `kcalPerGram`, `totalCalories` |
+| Модели данных | `FoodItem`, `DiaryEntry` |
+| Фильтрация списков | `ChoiceChip` и метод `where()` |
+| Навигация | `Navigator.push()` и `MaterialPageRoute` |
+| Передача колбэков | `VoidCallback` для связи экранов |
+| Состояние виджета | `StatefulWidget` и `setState()` |
+| Диалоги | `showDialog()` и `AlertDialog` |
+| Уведомления | `ScaffoldMessenger.showSnackBar()` |
+
