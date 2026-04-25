@@ -3,8 +3,13 @@ import 'package:calorie_tracker/models/food_item.dart';
 
 class FoodDetailScreen extends StatelessWidget {
   final FoodItem food;
+  final VoidCallback? onAddToDiary; // callback для добавления в дневник
 
-  const FoodDetailScreen({super.key, required this.food});
+  const FoodDetailScreen({
+    super.key,
+    required this.food,
+    this.onAddToDiary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +18,26 @@ class FoodDetailScreen extends StatelessWidget {
         title: Text(food.name),
         backgroundColor: food.color,
         foregroundColor: Colors.white,
+        actions: [
+          // Кнопка добавления в дневник
+          IconButton(
+            onPressed: () {
+              if (onAddToDiary != null) {
+                onAddToDiary!();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Нажмите "+" на главном экране чтобы добавить ${food.name}',
+                    ),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.add_shopping_cart),
+            tooltip: 'Добавить в дневник',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -61,6 +86,7 @@ class FoodDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+            // Визуализация пропорций
             const Text(
               'Соотношение КБЖУ',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -124,6 +150,29 @@ class FoodDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+
+            const SizedBox(height: 30),
+
+            // Кнопка добавления в дневник (дублируем снизу)
+            if (onAddToDiary != null)
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () {
+                    onAddToDiary!();
+                  },
+                  icon: const Icon(Icons.add_shopping_cart),
+                  label: const Text('Добавить в дневник'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: food.color,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

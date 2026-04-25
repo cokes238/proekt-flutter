@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:calorie_tracker/data/foods_data.dart';
-import 'package:calorie_tracker/widgets/food_card.dart';
 import 'package:calorie_tracker/models/food_item.dart';
+import 'package:calorie_tracker/models/diary_entry.dart';
+import 'package:calorie_tracker/widgets/food_card.dart';
+import 'package:calorie_tracker/screens/diary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,12 +14,61 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'Все';
+  final List<DiaryEntry> _diary = [];
 
   List<String> get _categories => ['Все', 'Завтрак', 'Обед', 'Ужин', 'Перекус'];
 
   List<FoodItem> get _filteredFoods {
     if (_selectedCategory == 'Все') return foods;
     return foods.where((f) => f.category == _selectedCategory).toList();
+  }
+
+  void _addToDiary(FoodItem food) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController(text: '100');
+        return AlertDialog(
+          title: Text('Добавить ${food.name}'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Вес порции (г)',
+              suffixText: 'г',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final grams = int.tryParse(controller.text) ?? 100;
+                setState(() {
+                  _diary.add(DiaryEntry(
+                    food: food,
+                    grams: grams,
+                    time: DateTime.now(),
+                  ));
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${food.name} добавлен в дневник',
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+              child: const Text('Добавить'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -36,8 +87,21 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.white,
         centerTitle: true,
         actions: [
+          // Кнопка дневника
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DiaryScreen(entries: _diary),
+                ),
+              );
+            },
+            icon: const Icon(Icons.book),
+            tooltip: 'Дневник',
+          ),
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 8),
             child: Center(
               child: Text(
                 '${foods.length}',
@@ -116,13 +180,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   : ListView.builder(
                       itemCount: _filteredFoods.length,
                       itemBuilder: (context, index) {
-                        return FoodCard(food: _filteredFoods[index]);
+                        final food = _filteredFoods[index];
+                        return FoodCard(
+                          food: food,
+                          onAddToDiary: () => _addToDiary(food),
+                        );
                       },
                     ),
             ),
           ],
         ),
       ),
+      floatingActionButton: _diary.isNotEmpty
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DiaryScreen(entries: _diary),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.book),
+              label: Text('Дневник (${_diary.length})'),
+              backgroundColor: Colors.teal[700],
+              foregroundColor: Colors.white,
+            )
+          : null,
     );
   }
 }

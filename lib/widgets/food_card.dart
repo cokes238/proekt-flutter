@@ -4,8 +4,13 @@ import 'package:calorie_tracker/screens/food_detail_screen.dart';
 
 class FoodCard extends StatelessWidget {
   final FoodItem food;
+  final VoidCallback? onAddToDiary; // callback для добавления в дневник
 
-  const FoodCard({super.key, required this.food});
+  const FoodCard({
+    super.key,
+    required this.food,
+    this.onAddToDiary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +26,18 @@ class FoodCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FoodDetailScreen(food: food),
+              builder: (context) => FoodDetailScreen(
+                food: food,
+                onAddToDiary: onAddToDiary,
+              ),
             ),
           );
+        },
+        onLongPress: () {
+          // Долгое нажатие — добавляем в дневник
+          if (onAddToDiary != null) {
+            onAddToDiary!();
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(14),
