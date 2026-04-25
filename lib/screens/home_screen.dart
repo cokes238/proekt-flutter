@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:calorie_tracker/data/foods_data.dart';
 import 'package:calorie_tracker/widgets/food_card.dart';
+import 'package:calorie_tracker/models/food_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
